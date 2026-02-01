@@ -288,6 +288,9 @@
     <!-- Media Library Tab -->
     <div id="media-tab" class="tab-content">
       <h2>Media Library</h2>
+      <div class="status" style="margin-bottom: 20px; border-color: #ff8800; color: #ff8800;">
+        ⚠️ <strong>IMPORTANT:</strong> You must upload at least ONE file to both Commercials and Bumpers (even for commercial-free channels). FieldStation42 requires these directories to exist for scheduling to work correctly. You can upload a simple 2-second black video or station ID as a placeholder.
+      </div>
       <div class="channel-grid">
         <div class="channel-card">
           <h3>Commercials</h3>
@@ -377,9 +380,11 @@
       
       const title = type === 'commercial' ? 'Upload Commercials' :
                     type === 'bump' ? 'Upload Bumpers' :
-                    `Upload to ${channelName}`;
+                    `Upload Shows/Movies to ${channelName}`;
       
       document.getElementById('upload-title').textContent = title;
+      document.getElementById('upload-status').innerHTML = '';
+      document.getElementById('file-input').value = ''; // Reset file input
       document.getElementById('upload-modal').classList.add('active');
     }
 
@@ -572,7 +577,7 @@
               ${channel.commercialFree ? '✓ Commercial-Free' : '✗ With Commercials'}
             </div>
             <div class="channel-actions">
-              <button class="btn" onclick="openUploadModal('channel', '${channel.name}')">Upload</button>
+              <button class="btn" onclick="openUploadModal('channel', '${channel.name}')">Upload Shows/Movies</button>
               <button class="btn btn-secondary" onclick="deleteChannel('${channel.name}')">Delete</button>
             </div>
             <div class="controls">
