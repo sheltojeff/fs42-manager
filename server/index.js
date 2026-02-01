@@ -176,8 +176,8 @@ app.post('/api/fs42/catalog/:channelName', async (req, res) => {
     const configPath = join(CONFS_DIR, `${channelName}.json`);
     
     const { stdout, stderr } = await execAsync(
-      `cd ${FS42_PATH} && python3 station_42.py -c ${configPath} --build-catalog`,
-      { timeout: 60000 }
+      `cd ${FS42_PATH} && source env/bin/activate && python3 station_42.py --rebuild_catalog ${channelName}`,
+      { timeout: 60000, shell: '/bin/bash' }
     );
     
     res.json({ success: true, output: stdout, error: stderr });
@@ -193,8 +193,8 @@ app.post('/api/fs42/schedule/:channelName', async (req, res) => {
     const configPath = join(CONFS_DIR, `${channelName}.json`);
     
     const { stdout, stderr } = await execAsync(
-      `cd ${FS42_PATH} && python3 station_42.py -c ${configPath} --build-schedule --days ${days || 7}`,
-      { timeout: 120000 }
+      `cd ${FS42_PATH} && source env/bin/activate && python3 station_42.py --add_week ${channelName}`,
+      { timeout: 120000, shell: '/bin/bash' }
     );
     
     res.json({ success: true, output: stdout, error: stderr });
@@ -208,8 +208,8 @@ app.post('/api/fs42/player/start', async (req, res) => {
     const { channelNumber } = req.body;
     
     const { stdout, stderr } = await execAsync(
-      `cd ${FS42_PATH} && python3 field_player.py --channel ${channelNumber} &`,
-      { timeout: 5000 }
+      `cd ${FS42_PATH} && source env/bin/activate && nohup python3 field_player.py --channel ${channelNumber} > /dev/null 2>&1 &`,
+      { timeout: 5000, shell: '/bin/bash' }
     );
     
     res.json({ success: true, output: stdout, error: stderr });
