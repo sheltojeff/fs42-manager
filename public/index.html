@@ -427,10 +427,18 @@
     }
 
     async function uploadFiles() {
+      console.log('uploadFiles called');
+      console.log('selectedFiles:', selectedFiles);
+      console.log('currentUploadType:', currentUploadType);
+      console.log('currentChannelName:', currentChannelName);
+      
       if (selectedFiles.length === 0) {
         alert('Please select files to upload');
         return;
       }
+
+      document.getElementById('upload-status').innerHTML = 
+        `<div class="status">Uploading ${selectedFiles.length} file(s)...</div>`;
 
       const formData = new FormData();
       formData.append('uploadType', currentUploadType);
@@ -439,24 +447,32 @@
       }
 
       selectedFiles.forEach(file => {
+        console.log('Adding file:', file.name);
         formData.append('files', file);
       });
 
       try {
+        console.log('Sending upload request...');
         const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData
         });
 
+        console.log('Response status:', response.status);
         const result = await response.json();
+        console.log('Result:', result);
         
         if (result.success) {
           document.getElementById('upload-status').innerHTML = 
             `<div class="status success">✓ ${result.filesUploaded} file(s) uploaded successfully</div>`;
           selectedFiles = [];
           setTimeout(() => closeModal('upload-modal'), 2000);
+        } else {
+          document.getElementById('upload-status').innerHTML = 
+            `<div class="status error">✗ Upload failed</div>`;
         }
       } catch (error) {
+        console.error('Upload error:', error);
         document.getElementById('upload-status').innerHTML = 
           `<div class="status error">✗ Upload failed: ${error.message}</div>`;
       }
