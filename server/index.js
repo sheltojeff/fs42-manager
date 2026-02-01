@@ -120,24 +120,29 @@ app.post('/api/channels', async (req, res) => {
     await ensureDir(BUMP_DIR);
     
     // Build configuration
-    const config = {
+    const stationConf = {
       network_name: name,
       channel_number: channelNumber,
-      network_type: type || 'standard',
+      network_type: type || 'loop',
       content_dir: `catalog/${name}`,
+      commercial_dir: 'commercial',
+      bump_dir: 'bump',
       commercial_free: commercialFree || false
     };
     
     if (!commercialFree) {
-      config.commercial_dir = 'commercial';
-      config.bump_dir = 'bump';
-      config.break_strategy = breakStrategy || 'standard';
-      config.break_duration = breakDuration || 120;
+      stationConf.break_strategy = breakStrategy || 'standard';
+      stationConf.break_duration = breakDuration || 120;
     }
     
     if (type === 'standard' && scheduleIncrement) {
-      config.schedule_increment = scheduleIncrement;
+      stationConf.schedule_increment = scheduleIncrement || 30;
     }
+    
+    // Wrap in station_conf as required by FieldStation42
+    const config = {
+      station_conf: stationConf
+    };
     
     // Write configuration file
     const configPath = join(CONFS_DIR, `${name}.json`);
