@@ -88,15 +88,16 @@ app.get('/api/channels', async (req, res) => {
     const channels = await Promise.all(
       jsonFiles.map(async (file) => {
         const config = await readJSONFile(join(CONFS_DIR, file));
-        if (config) {
+        if (config && config.station_conf) {
+          const sc = config.station_conf;
           return {
-            name: config.network_name,
-            channelNumber: config.channel_number,
-            type: config.network_type,
-            commercialFree: config.commercial_free || false,
-            breakStrategy: config.break_strategy,
-            breakDuration: config.break_duration,
-            scheduleIncrement: config.schedule_increment
+            name: sc.network_name,
+            channelNumber: sc.channel_number,
+            type: sc.network_type,
+            commercialFree: sc.commercial_free || false,
+            breakStrategy: sc.break_strategy,
+            breakDuration: sc.break_duration,
+            scheduleIncrement: sc.schedule_increment
           };
         }
         return null;
